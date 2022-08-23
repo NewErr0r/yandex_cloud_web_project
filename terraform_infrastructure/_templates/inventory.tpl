@@ -1,4 +1,5 @@
-${host}
+${host-1}
+${host-2}
 
 [all:vars]
 ansible_user = ${user}

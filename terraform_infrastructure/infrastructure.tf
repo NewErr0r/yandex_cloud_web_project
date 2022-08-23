@@ -2,10 +2,9 @@ data "yandex_compute_image" "debian_image" {
   family = "debian-11"
 }
 
-# Создаём VM APP_01 и APP_02
-resource "yandex_compute_instance" "app" {
-    count       = 2           
-    name        = "app-0${count.index+1}"  
+# Создаём VM 'app'
+resource "yandex_compute_instance" "app" {        
+    name        = "app"  
     zone        = "ru-central1-a"
 
     resources {
@@ -21,7 +20,9 @@ resource "yandex_compute_instance" "app" {
     }
 
     network_interface {
-        subnet_id = yandex_vpc_subnet.subnet-1.id
+        subnet_id   = yandex_vpc_subnet.subnet-1.id
+        ip_address  = "192.168.15.101"
+        nat         = true
     }
 
     scheduling_policy {
@@ -33,7 +34,7 @@ resource "yandex_compute_instance" "app" {
     }
 }
 
-# Создаём VM APP_GW
+# Создаём VM app_gw
 resource "yandex_compute_instance" "app_gw" {
     name        = "app-gw"  
     zone        = "ru-central1-a"
@@ -51,8 +52,9 @@ resource "yandex_compute_instance" "app_gw" {
     }
 
     network_interface {
-        subnet_id = yandex_vpc_subnet.subnet-1.id
-        nat       = true
+        subnet_id   = yandex_vpc_subnet.subnet-1.id
+        ip_address  = "192.168.15.100"
+        nat         = true
     }
 
     scheduling_policy {
@@ -83,7 +85,8 @@ data "template_file" "inventory" {
   
     vars = {
         user = "debian"
-        host = join("", [yandex_compute_instance.app_gw.name, " ansible_host=", yandex_compute_instance.app_gw.network_interface.0.nat_ip_address])
+        host-1 = join("", [yandex_compute_instance.app_gw.name, " ansible_host=", yandex_compute_instance.app_gw.network_interface.0.nat_ip_address])
+        host-2 = join("", [yandex_compute_instance.app.name, " ansible_host=", yandex_compute_instance.app.network_interface.0.nat_ip_address])
     }
 }
 
