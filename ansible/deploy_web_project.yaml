@@ -1,0 +1,70 @@
+---
+- name: Deploy Web Project on VM in Yandex Cloud
+  hosts: all
+  become: true 
+  gather_facts: no 
+
+  tasks: 
+    - name: Update all  packages 
+      apt: 
+        name: "*"
+        state: latest 
+        update_cache: yes 
+        force_apt_get: yes 
+
+    - name: Install NGINX on VM 
+      apt: 
+        name: nginx 
+        state: latest 
+        update_cache: yes 
+      
+    - name: Started and Enabled NGINX  
+      service: 
+        name: nginx 
+        enabled: true 
+        state: started 
+
+- hosts: app
+  become: true 
+  gather_facts: no 
+
+  tasks: 
+    - name: Copy project on app 
+      copy: 
+        src: ../site_project
+        dest: /var/www/html
+      
+    - name: Configurations NGINX default config 
+      copy: 
+        src:  ./default.conf
+        dest: /etc/nginx/sites-enabled/default
+      notify:
+        - Restarted NGINX
+
+  handlers:
+    - name: Restarted NGINX
+      service: 
+        name: nginx 
+        state: restarted
+
+- hosts: app-gw
+  become: true 
+  gather_facts: no
+
+  tasks: 
+    - name: Deploy NGINX proxy
+      copy: 
+        src: ./proxy.conf
+        dest: /etc/nginx/sites-enabled/default
+      notify:
+        - Restarted NGINX
+
+    - debug: 
+        msg: 
+          - "Open the browser 'http://{{ ansible_ssh_host }}'"
+
+  handlers:
+    - name: Restarted NGINX
+      service: 
+        name: nginx 
+        state: restarted
