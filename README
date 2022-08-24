@@ -1,0 +1,38 @@
+Как этим пользоваться?
+
+1. Склонировать проект локаньно:
+# git clone https://github.com/NewErr0r/yandex_cloud_web_project.git
+
+2. Разместить свой проект в дирректорию "site_project":
+
+3. В файле по пути "terraform_infrastructure/main.tf" указать свои данные от Yandex Cloud: 
+
+...
+provider "yandex" {
+  token     = "<OAuth>"
+  cloud_id  = "<идентификатор облака>"
+  folder_id = "<идентификатор каталога>"
+  zone      = "<зона доступности по умолчанию>"
+}
+...
+
+4. Скачать провайдер terraform для Yandex Cloud: 
+
+# cd terraform_infrastructure/
+# terraform init
+
+5. Запустить развёртывания инфраструктуры в Yandex Cloud (app - ВМ хостер, app-gw - ВМ proxy):
+
+# terraform applay (ответить: yes)
+
+6. После поднятия инфраструктуры запустить развёртывание проекта на ВМ: 
+
+# ansible-playbook -i inventory ../ansible/deploy_web_project.yaml
+
+После на экран будет выведена ссылка на дуступ к сайту, через публичный адрес проксирующей ВМ!
+...
+TASK [debug] *************************************************************************************************
+ok: [app-gw] => {
+    "msg": [
+        "Open the browser 'http://<ip_address>'"
+    ]
