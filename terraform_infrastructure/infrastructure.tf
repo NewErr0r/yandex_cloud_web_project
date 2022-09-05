@@ -26,11 +26,11 @@ resource "yandex_compute_instance" "app" {
     }
 
     scheduling_policy {
-      preemptible = true                        # Прерываемая VM            
+      preemptible = true                       # Прерываемая VM            
     }
 
     metadata = {
-        ssh-keys = "debian:${file("../keys/id_rsa.pub")}"     # debian - логин пользователя
+        ssh-keys = "debian:${file("~/.ssh/id_rsa.pub")}"     # debian - логин пользователя
     }
 }
 
@@ -62,7 +62,7 @@ resource "yandex_compute_instance" "app_gw" {
     }
 
     metadata = {
-        ssh-keys = "debian:${file("../keys/id_rsa.pub")}"     # debian - логин пользователя
+        ssh-keys = "debian:${file("~/.ssh/id_rsa.pub")}"     # debian - логин пользователя
     }
 }
 
