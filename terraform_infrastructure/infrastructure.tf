@@ -30,7 +30,7 @@ resource "yandex_compute_instance" "app" {
     }
 
     metadata = {
-        ssh-keys = "debian:${file("~/.ssh/id_rsa.pub")}"     # debian - логин пользователя
+        ssh-keys = "debian:${file("~/.ssh/id_rsa.pub")}"      # debian - логин пользователя
     }
 }
 
