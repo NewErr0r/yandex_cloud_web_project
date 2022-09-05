@@ -15,7 +15,7 @@ resource "yandex_compute_instance" "app" {
     boot_disk {
         initialize_params {
             image_id = data.yandex_compute_image.debian_image.id
-            size     = 15 #GB
+            size     = 15   #GB
         }
     }
 
